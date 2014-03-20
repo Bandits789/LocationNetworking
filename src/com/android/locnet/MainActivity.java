@@ -97,6 +97,7 @@ public class MainActivity extends Activity implements LocationListener {
 	 */
 	public void download(View view) {
 		String url = "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
+		int size = 650924;
 
 		HttpGet request = new HttpGet(url);
 		HttpParams httpParameters = new BasicHttpParams();
@@ -113,8 +114,11 @@ public class MainActivity extends Activity implements LocationListener {
 		long afterTime = System.currentTimeMillis();
 		long timeDifference = afterTime - beforeTime;
 		logString += "Latency: " + timeDifference + "\n";
+		logString += "Throughput: " + size / (timeDifference * 1000) + "\n";
 
-		Toast.makeText(getBaseContext(), "Latency: " + timeDifference,
-				Toast.LENGTH_SHORT).show();
+		Toast.makeText(
+				getBaseContext(),
+				"Latency: " + timeDifference + "\nThroughput: " + size
+						/ (timeDifference * 1000), Toast.LENGTH_SHORT).show();
 	}
 }
