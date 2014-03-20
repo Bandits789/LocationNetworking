@@ -4,6 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -84,4 +92,29 @@ public class MainActivity extends Activity implements LocationListener {
 		}
 	}
 
+	/**
+	 * Download the file and record latency and throughput
+	 */
+	public void download(View view) {
+		String url = "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
+
+		HttpGet request = new HttpGet(url);
+		HttpParams httpParameters = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
+		HttpClient httpClient = new DefaultHttpClient(httpParameters);
+
+		long beforeTime = System.currentTimeMillis();
+		try {
+			HttpResponse response = httpClient.execute(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		long afterTime = System.currentTimeMillis();
+		long timeDifference = afterTime - beforeTime;
+		logString += "Latency: " + timeDifference + "\n";
+
+		Toast.makeText(getBaseContext(), "Latency: " + timeDifference,
+				Toast.LENGTH_SHORT).show();
+	}
 }

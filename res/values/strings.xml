@@ -4,6 +4,7 @@
     <string name="app_name">Location Networking</string>
     <string name="action_settings">Settings</string>
     <string name="locanetwork">Loca Network!</string>
+    <string name="download">Download</string>
     <string name="button">Write to log</string>
 
 </resources>

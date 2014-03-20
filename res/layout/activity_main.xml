@@ -13,14 +13,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/locanetwork" />
-
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
+        android:text="@string/download" 
+        android:onClick="download"/>
+    
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_below="@+id/button2"
         android:text="@string/button" 
         android:onClick="writeToLog"/>
 
+
+    
 </RelativeLayout>
