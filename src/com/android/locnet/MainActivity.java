@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location loc) {
+		// every time location is changed, write this to the log
 		Toast.makeText(
 				getBaseContext(),
 				"Location changed: Lat: " + loc.getLatitude() + " Lng: "
@@ -70,9 +71,11 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	/**
-	 * Write the logString to a file in sdcard
+	 * Write the logString to a file in sdcard, every time this is clicked it
+	 * adds several newlines to tell the output apart
 	 */
 	public void writeToLog(View view) {
+		logString += "\n\n\n";
 		File sdCard = Environment.getExternalStorageDirectory();
 		File dir = new File(sdCard.getAbsolutePath() + "/myLogcat");
 		dir.mkdirs();
@@ -93,17 +96,20 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	/**
-	 * Download the file and record latency and throughput
+	 * Download the file and record latency (time it took) and throughput
+	 * (size/secs)
 	 */
 	public void download(View view) {
 		String url = "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
 		int size = 650924;
 
+		// setup
 		HttpGet request = new HttpGet(url);
 		HttpParams httpParameters = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
 		HttpClient httpClient = new DefaultHttpClient(httpParameters);
 
+		// time the download
 		long beforeTime = System.currentTimeMillis();
 		try {
 			HttpResponse response = httpClient.execute(request);
@@ -113,6 +119,8 @@ public class MainActivity extends Activity implements LocationListener {
 
 		long afterTime = System.currentTimeMillis();
 		long timeDifference = afterTime - beforeTime;
+		// latency = how much time this took
+		// throughput = size/secs
 		logString += "Latency: " + timeDifference + "\n";
 		logString += "Throughput: " + size / (timeDifference * 1000) + "\n";
 
