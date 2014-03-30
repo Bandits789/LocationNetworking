@@ -27,8 +27,11 @@ import com.android.helloworld.R;
 
 public class MainActivity extends Activity implements LocationListener {
 
-	private String logString = "";
-
+	private String logLocs = "";
+	private String logNets = ""; 
+	File fileLoc;
+	File fileNet; 
+	
 	@Override
 	public void onLocationChanged(Location loc) {
 		// every time location is changed, write this to the log
@@ -37,8 +40,8 @@ public class MainActivity extends Activity implements LocationListener {
 				"Location changed: Lat: " + loc.getLatitude() + " Lng: "
 						+ loc.getLongitude(), Toast.LENGTH_SHORT).show();
 
-		logString = "Longitude: " + loc.getLongitude() + "\n";
-		logString += "Latitude: " + loc.getLatitude() + "\n";
+		logLocs = "Longitude: " + loc.getLongitude() + "\n";
+		logLocs += "Latitude: " + loc.getLatitude() + "\n";
 	}
 
 	@Override
@@ -61,6 +64,14 @@ public class MainActivity extends Activity implements LocationListener {
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				5000, 10, this);
+		
+		// Make directory for writing to log files
+	    File sdCard = Environment.getExternalStorageDirectory();
+	    File dir = new File(sdCard.getAbsolutePath() + "/myLogcat");
+	    dir.mkdirs(); 
+	    fileLoc = new File(dir, "logLocation.txt");
+	    fileNet = new File(dir, "logNetwork.txt"); 
+
 	}
 
 	@Override
@@ -75,19 +86,15 @@ public class MainActivity extends Activity implements LocationListener {
 	 * adds several newlines to tell the output apart
 	 */
 	public void writeToLog(View view) {
-		logString += "\n\n\n";
-		File sdCard = Environment.getExternalStorageDirectory();
-		File dir = new File(sdCard.getAbsolutePath() + "/myLogcat");
-		dir.mkdirs();
-		File file = new File(dir, "logcat.txt");
+		logLocs += "\n\n\n";
 
 		try {
 			// to write logcat in text file
-			FileOutputStream fOut = new FileOutputStream(file);
+			FileOutputStream fOut = new FileOutputStream(fileLoc);
 			OutputStreamWriter osw = new OutputStreamWriter(fOut);
 
 			// Write the string to the file
-			osw.write(logString);
+			osw.write(logLocs);
 			osw.flush();
 			osw.close();
 		} catch (Exception e) {
@@ -100,6 +107,8 @@ public class MainActivity extends Activity implements LocationListener {
 	 * (size/secs)
 	 */
 	public void download(View view) {
+	    logNets += "\n\n\n";
+
 		String url = "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
 		int size = 650924;
 
@@ -121,8 +130,21 @@ public class MainActivity extends Activity implements LocationListener {
 		long timeDifference = afterTime - beforeTime;
 		// latency = how much time this took
 		// throughput = size/secs
-		logString += "Latency: " + timeDifference + "\n";
-		logString += "Throughput: " + size / (timeDifference * 1000) + "\n";
+		logNets += "Latency: " + timeDifference + "\n";
+		logNets += "Throughput: " + size / (timeDifference * 1000) + "\n";
+		
+		try {
+            // write log to text file
+            FileOutputStream fOut = new FileOutputStream(fileNet);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+
+            // Write the string to the file
+            osw.write(logNets);
+            osw.flush();
+            osw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 		Toast.makeText(
 				getBaseContext(),
