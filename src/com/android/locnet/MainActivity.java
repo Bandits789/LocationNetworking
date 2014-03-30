@@ -1,9 +1,7 @@
 package com.android.locnet;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.OutputStreamWriter;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -18,6 +16,8 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -72,8 +72,11 @@ public class MainActivity extends Activity implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location loc) {
+		ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		
 		boolean GPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		boolean WIFI = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		boolean WIFI = mWifi.isConnected();
 		
 		String provider = "";
 		if (GPS) {
@@ -81,7 +84,7 @@ public class MainActivity extends Activity implements LocationListener {
 		} else if (WIFI) {
 			provider = "WIFI";
 		} else {
-			provider = "PASSIVE";
+			provider = "CELL TOWERS";
 		}
 		
 		// every time location is changed, write this to the log
@@ -179,6 +182,22 @@ public class MainActivity extends Activity implements LocationListener {
 				getBaseContext(),
 				"Latency: " + timeDifference + "\nThroughput: " + size
 						/ (timeDifference * 1000), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void confirmation(View view) {
+		try {
+			FileWriter f = new FileWriter(fileLoc, true);
+
+			// Write the string to the file
+			f.write("OKAY TEST\n\n");
+			f.flush();
+			f.close();
+			
+			Toast.makeText(
+					getBaseContext(),"OKAY TEST", Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
