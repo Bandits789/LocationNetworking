@@ -2,6 +2,7 @@ package com.android.locnet;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 
 import org.apache.http.HttpResponse;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 		logLocs = "Longitude: " + loc.getLongitude() + "\n";
 		logLocs += "Latitude: " + loc.getLatitude() + "\n";
+		logLocs += "\n\n\n";
 	}
 
 	@Override
@@ -71,6 +73,19 @@ public class MainActivity extends Activity implements LocationListener {
 	    dir.mkdirs(); 
 	    fileLoc = new File(dir, "logLocation.txt");
 	    fileNet = new File(dir, "logNetwork.txt"); 
+	    
+	    try {
+			// to write logcat in text file
+			FileWriter f = new FileWriter(fileLoc, false);
+
+			// Write the string to the file
+			f.write("");
+			f.flush();
+			f.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -86,17 +101,18 @@ public class MainActivity extends Activity implements LocationListener {
 	 * adds several newlines to tell the output apart
 	 */
 	public void writeToLog(View view) {
-		logLocs += "\n\n\n";
-
+		
 		try {
 			// to write logcat in text file
-			FileOutputStream fOut = new FileOutputStream(fileLoc);
-			OutputStreamWriter osw = new OutputStreamWriter(fOut);
+			FileWriter f = new FileWriter(fileLoc, true);
 
 			// Write the string to the file
-			osw.write(logLocs);
-			osw.flush();
-			osw.close();
+			f.write(logLocs);
+			f.flush();
+			f.close();
+			
+			Toast.makeText(
+					getBaseContext(),logLocs, Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
