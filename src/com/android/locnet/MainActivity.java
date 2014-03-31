@@ -3,21 +3,16 @@ package com.android.locnet;
 import java.io.File;
 import java.io.FileWriter;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -140,23 +135,25 @@ public class MainActivity extends Activity implements LocationListener {
 	 * (size/secs)
 	 */
 	public void download(View view) {
-
 		String url = "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
 		int size = 650924;
 
-		// setup
-		HttpGet request = new HttpGet(url);
-		HttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
-		HttpClient httpClient = new DefaultHttpClient(httpParameters);
+		DownloadManager.Request request = new DownloadManager.Request(
+				Uri.parse(url));
+		request.setDescription("Some descrition");
+		request.setTitle("Some title");
 
-		// time the download
-		long beforeTime = System.currentTimeMillis();
-		try {
-			HttpResponse response = httpClient.execute(request);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			request.allowScanningByMediaScanner();
+			request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 		}
+		request.setDestinationInExternalPublicDir(
+				Environment.DIRECTORY_DOWNLOADS, "name-of-the-file.ext");
+
+		// get download service and enqueue file
+		DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		long beforeTime = System.currentTimeMillis();
+		manager.enqueue(request);
 
 		long afterTime = System.currentTimeMillis();
 		long timeDifference = afterTime - beforeTime;
