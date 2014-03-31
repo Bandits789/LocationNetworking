@@ -46,11 +46,16 @@ public class MainActivity extends Activity implements LocationListener {
 	    try {
 			// to write logcat in text file
 			FileWriter f = new FileWriter(fileLoc, false);
+			FileWriter w = new FileWriter(fileNet, false);
 	
 			// Write the string to the file
 			f.write("");
 			f.flush();
 			f.close();
+			
+			w.write("");
+			w.flush();
+			w.close();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,7 +145,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 		DownloadManager.Request request = new DownloadManager.Request(
 				Uri.parse(url));
-		request.setDescription("Some descrition");
+		request.setDescription("Some description");
 		request.setTitle("Some title");
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
